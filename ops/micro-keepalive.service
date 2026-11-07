@@ -1,0 +1,28 @@
+[Unit]
+Description=Micro keepalive: real maintenance work against Oracle idle reclaim
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+User=dbt-runner
+Group=dbt-runner
+WorkingDirectory=/opt/privacy-dbt/repo
+# Real maintenance, not a busy-loop: verify the tunnel health endpoint,
+# verify disk space, run a light dbt parse (compiles the project,
+# exercises the engine, warms the cache). Runs as dbt-runner; the dbt
+# binary is /opt/privacy-dbt/.local/bin/dbt (dbt-runner home is
+# /opt/privacy-dbt). MO health is out of scope here; the nightly run
+# does not depend on MO.
+ExecStart=/bin/bash -c 'curl -fsS --max-time 10 https://vm-api.movahedi.ca/health; df -h / | tail -1; /opt/privacy-dbt/.local/bin/dbt parse'
+TimeoutStartSec=300
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/opt/privacy-dbt
+NoNewPrivileges=true
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,24 @@
+# API shadow contract: cookie_patterns
+family: cookie_patterns
+canonical_source:
+  file: workers/public-api/src/api/data.ts
+  constant: COOKIE_PATTERNS
+  line: 3206
+  upstream: src/data/cookie-kb.ts
+  generator: scripts/generate-api-data.mjs
+key_field: pattern
+fields:
+  - pattern
+  - match
+  - vendor
+  - legalParty
+  - purpose
+  - source note
+  - review date
+live_count_hint: 202
+data_version: v2026.12.0
+cookie_kb_version: 2026-10-20.1
+snapshot_source: GitHub main (movahedi-ca/movahedi-ca), NOT the local checkout
+notes:
+  - COOKIE_PATTERNS carries the vendor field; the vendor KB is its vendor/legalParty dimension.
+  - License/redistribution review: NOT CHECKED (owner decision before inclusion).

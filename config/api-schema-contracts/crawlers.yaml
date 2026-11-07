@@ -1,0 +1,14 @@
+# API shadow contract: crawlers
+family: crawlers
+canonical_source:
+  file: workers/public-api/src/api/data.ts
+  constant: CRAWLERS
+  line: 5596
+  upstream: src/data/crawlers.json
+key_field: token
+live_count_hint: 55
+data_version: v2026.12.0
+crawler_dataset_version: 1.0.1
+snapshot_source: GitHub main (movahedi-ca/movahedi-ca), NOT the local checkout
+notes:
+  - License/redistribution review: NOT CHECKED (owner decision before inclusion).

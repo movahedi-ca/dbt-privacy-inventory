@@ -1,0 +1,10 @@
+[Unit]
+Description=Micro keepalive every 6 hours (real maintenance work)
+
+[Timer]
+OnCalendar=*:00/6:00
+Persistent=false
+Unit=micro-keepalive.service
+
+[Install]
+WantedBy=timers.target

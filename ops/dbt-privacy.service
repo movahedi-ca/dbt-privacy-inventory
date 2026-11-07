@@ -1,0 +1,26 @@
+[Unit]
+Description=Nightly dbt + DuckDB privacy-inventory builder
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+User=dbt-runner
+Group=dbt-runner
+WorkingDirectory=/opt/privacy-dbt/repo
+ExecStart=/opt/privacy-dbt/scripts/run-nightly.sh
+# Resource bounds are benchmark results (T29), not guessed constants.
+# MemoryMax is set from the measured peak RSS of a full dbt build.
+MemoryMax=800M
+CPUQuota=150%
+TimeoutStartSec=1800
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/opt/privacy-dbt
+NoNewPrivileges=true
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target

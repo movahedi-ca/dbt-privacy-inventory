@@ -1,0 +1,13 @@
+# API shadow contract: law25_checks
+family: law25_checks
+canonical_source:
+  file: workers/public-api/src/api/data.ts
+  constant: LAW25_CHECKLIST
+  line: 5475
+  upstream: (in data.ts)
+key_field: id
+live_count_hint: 11
+data_version: v2026.12.0
+snapshot_source: GitHub main (movahedi-ca/movahedi-ca), NOT the local checkout
+notes:
+  - License/redistribution review: NOT CHECKED (owner decision before inclusion).

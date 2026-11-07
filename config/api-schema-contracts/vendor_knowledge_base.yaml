@@ -1,0 +1,19 @@
+# API shadow contract: vendor_knowledge_base
+# No standalone API constant exists. This family is the vendor/legalParty
+# dimension of the cookie KB (src/data/cookie-kb.ts, CookieKbEntry:
+# pattern, match, vendor, legalParty, purpose, source note, review date).
+# Recorded as a discovery finding for P7.
+family: vendor_knowledge_base
+canonical_source:
+  file: workers/public-api/src/api/data.ts
+  constant: NONE (derived from COOKIE_PATTERNS vendor/legalParty fields)
+  line: 3206
+  upstream: src/data/cookie-kb.ts
+key_field: vendor / legalParty
+live_count_hint: null (derived, not a standalone count)
+data_version: v2026.12.0
+cookie_kb_version: 2026-10-20.1
+snapshot_source: GitHub main (movahedi-ca/movahedi-ca), NOT the local checkout
+notes:
+  - The shadow model for this family groups COOKIE_PATTERNS by vendor/legalParty.
+  - License/redistribution review: NOT CHECKED (owner decision before inclusion).

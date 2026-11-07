@@ -1,0 +1,10 @@
+[Unit]
+Description=Nightly dbt + DuckDB privacy-inventory builder (02:15 UTC)
+
+[Timer]
+OnCalendar=02:15
+Persistent=false
+Unit=dbt-privacy.service
+
+[Install]
+WantedBy=timers.target

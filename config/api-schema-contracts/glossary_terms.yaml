@@ -1,0 +1,23 @@
+# API shadow contract: glossary_terms
+family: glossary_terms
+canonical_source:
+  file: workers/public-api/src/api/data.ts
+  constant: GLOSSARY_TERMS
+  line: 133
+  upstream: src/data/glossary.ts
+key_field: slug
+fields:
+  - slug
+  - term
+  - term_fr
+  - definition
+  - definition_fr
+  - french_completeness_status
+  - updated
+live_count_hint: 333
+data_version: v2026.12.0
+snapshot_source: GitHub main (movahedi-ca/movahedi-ca), NOT the local checkout
+notes:
+  - Entries carry EN + FR.
+  - Counts are discovery hints, not acceptance targets. Never discard legitimate new records to reproduce an old count.
+  - License/redistribution review: NOT CHECKED (owner decision before inclusion).
