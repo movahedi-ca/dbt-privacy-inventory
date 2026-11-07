@@ -17,10 +17,10 @@ HEALTH = "https://movahedi.ca/api/v1/health"
 
 FILES = {
     "data.ts": "workers/public-api/src/api/data.ts",
-    "cookie-kb.ts": "workers/public-api/src/data/cookie-kb.ts",
-    "crawlers.json": "workers/public-api/src/data/crawlers.json",
-    "glossary.ts": "workers/public-api/src/data/glossary.ts",
-    "cai-enforcement.json": "workers/public-api/src/data/cai-enforcement.json",
+    "cookie-kb.ts": "src/data/cookie-kb.ts",
+    "crawlers.json": "src/data/crawlers.json",
+    "glossary.ts": "src/data/glossary.ts",
+    "cai-enforcement.json": "src/data/cai-enforcement.json",
 }
 
 # (family, file, constant, key field)
@@ -99,18 +99,39 @@ def extract_array(source, const):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--out", required=True)
+    ap.add_argument("--snapshot-dir", default=None,
+                    help="Local dir holding data.ts, cookie-kb.ts, crawlers.json, "
+                         "glossary.ts, cai-enforcement.json + manifest.json. "
+                         "The Micro cannot fetch the private site repo directly; "
+                         "the snapshot is fetched where GitHub auth lives and "
+                         "transferred frozen, with SHA-256 verified here.")
     args = ap.parse_args()
     import os
     os.makedirs(args.out, exist_ok=True)
-    # Commit SHA from ls-remote (no clone needed).
-    ls = subprocess.run(["git", "ls-remote", f"https://github.com/{REPO}.git", "refs/heads/main"],
-                        capture_output=True, text=True, timeout=30)
-    head_sha = ls.stdout.split()[0] if ls.returncode == 0 and ls.stdout else "UNKNOWN"
-    blobs = {}
-    for name, path in FILES.items():
-        data = fetch(RAW + path)
-        blobs[name] = {"path": path, "bytes": len(data), "sha256": sha256(data), "text": data.decode("utf-8", errors="replace")}
-        print(f"fetched {name}: {len(data)} bytes sha256={blobs[name]['sha256'][:16]}...")
+    if args.snapshot_dir:
+        snap_manifest = json.load(open(os.path.join(args.snapshot_dir, "manifest.json")))
+        head_sha = snap_manifest["head_sha"]
+        blobs = {}
+        for name, path in FILES.items():
+            with open(os.path.join(args.snapshot_dir, name), "rb") as f:
+                data = f.read()
+            got = sha256(data)
+            want = snap_manifest["files"][name]["sha256"]
+            if got != want:
+                print(f"SHA MISMATCH {name}: got {got} want {want}", file=sys.stderr)
+                sys.exit(3)
+            blobs[name] = {"path": path, "bytes": len(data), "sha256": got, "text": data.decode("utf-8", errors="replace")}
+            print(f"verified {name}: {len(data)} bytes sha256={got[:16]}...")
+    else:
+        # Commit SHA from ls-remote (no clone needed).
+        ls = subprocess.run(["git", "ls-remote", f"https://github.com/{REPO}.git", "refs/heads/main"],
+                            capture_output=True, text=True, timeout=30)
+        head_sha = ls.stdout.split()[0] if ls.returncode == 0 and ls.stdout else "UNKNOWN"
+        blobs = {}
+        for name, path in FILES.items():
+            data = fetch(RAW + path)
+            blobs[name] = {"path": path, "bytes": len(data), "sha256": sha256(data), "text": data.decode("utf-8", errors="replace")}
+            print(f"fetched {name}: {len(data)} bytes sha256={blobs[name]['sha256'][:16]}...")
     data_ts = blobs["data.ts"]["text"]
     # Live counts from the health endpoint.
     health = json.loads(fetch(HEALTH).decode("utf-8"))
