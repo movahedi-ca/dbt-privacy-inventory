@@ -44,7 +44,7 @@ def extract_array(source, const):
     """Extract the array literal assigned to `export const NAME = [...]`
     (or `const NAME = [...]`) and count its top-level elements by bracket
     depth. Returns (count, array_text) or (None, None)."""
-    m = re.search(r"(?:export\s+)?const\s+" + re.escape(const) + r"\s*=\s*\[", source)
+    m = re.search(r"(?:export\s+)?const\s+" + re.escape(const) + r"(?:\s*:\s*[^=\[]+)?=\s*\[", source)
     if not m:
         return None, None
     i = m.end() - 1
@@ -133,14 +133,15 @@ def main():
             blobs[name] = {"path": path, "bytes": len(data), "sha256": sha256(data), "text": data.decode("utf-8", errors="replace")}
             print(f"fetched {name}: {len(data)} bytes sha256={blobs[name]['sha256'][:16]}...")
     data_ts = blobs["data.ts"]["text"]
-    # Live counts from the health endpoint.
+    # Live counts from the health endpoint (counts live under data.checks).
     health = json.loads(fetch(HEALTH).decode("utf-8"))
+    checks = health.get("data", {}).get("checks", {}) or health.get("checks", {}) or health
     live = {
-        "glossary_terms": health.get("glossary_terms") or health.get("glossary"),
-        "enforcement_actions": health.get("enforcement_actions"),
-        "law25_checks": health.get("law25_checks"),
-        "cookie_patterns": health.get("cookie_patterns"),
-        "crawlers": health.get("crawlers"),
+        "glossary_terms": checks.get("glossary_terms"),
+        "enforcement_actions": checks.get("enforcement_actions"),
+        "law25_checks": checks.get("law25_checks"),
+        "cookie_patterns": checks.get("cookie_patterns"),
+        "crawlers": checks.get("crawlers"),
     }
     families = []
     for fam, fname, const, key in FAMILIES:
@@ -186,7 +187,10 @@ def main():
     if mismatches:
         print(f"PARITY MISMATCH: {mismatches}", file=sys.stderr)
         sys.exit(2)
-    print("parity: all compared families match")
+    compared = [f["family"] for f in families if f.get("match") is True]
+    uncompared = [f["family"] for f in families if f.get("match") is None]
+    print(f"parity: {len(compared)} families compared and match; "
+          f"{len(uncompared)} not compared: {uncompared}")
 
 if __name__ == "__main__":
     main()
