@@ -6,18 +6,18 @@ project: dbt-privacy-inventory
 playbook: ~/workspace/user/files/dbt-1-2-3-4-Oracle-VM-Playbook-V3_5_v4mt.md
 playbook_version: "3.0"
 playbook_status: DESIGN (execution approved by owner order 2026-11-06 23:38 EST)
-phase: P1_design
-engineering_status: IN_PROGRESS
-production_status: NOT_DEPLOYED
-nightly_build_status: NOT_CONFIGURED
+phase: P8_operations
+engineering_status: COMPLETE_EXCEPT_OBSERVATION_WINDOWS
+production_status: NOT_DEPLOYED (Mode M; live deploy held for owner review)
+nightly_build_status: CONFIGURED
 published_release_id: null
-last_updated_utc: 2026-11-07T05:15:00Z
+last_updated_utc: 2026-11-07T05:48:00Z
 
 verified:
   oracle_account_free_only: VERIFIED_TRUE
-  x86_64_engine: NOT_CHECKED
+  x86_64_engine: VERIFIED_TRUE
   site_deploy_plane: VERIFIED_TRUE
-  public_manifest_safe: NOT_CHECKED
+  public_manifest_safe: VERIFIED_TRUE
   api_contracts: VERIFIED_TRUE
   owner_release_approval: NOT_CHECKED
 
@@ -42,25 +42,70 @@ deviations:
   - id: DEV-006
     what: "Keepalive is real maintenance work (health/integrity checks), not a busy-loop."
     authority: "Brief instruction + V2 section 2.3 tension resolved in the coordinator run. Documented in the evidence ledger."
+  - id: DEV-007
+    what: "dbt OSS v2 does not emit catalog.json. `dbt docs generate` reads info_schema/v1/ instead."
+    authority: "Observed live 2026-11-07 (target/ has no catalog.json after a successful docs generate)."
+    effect: "Release bundle holds manifest.json + run_results.json + public_graph.json (+ release.json, checksums). No catalog.json."
+  - id: DEV-008
+    what: "The Micro cannot fetch the private site repo (movahedi-ca/movahedi-ca is private; the Micro has no GitHub credentials by design)."
+    authority: "Observed live 2026-11-07 (raw.githubusercontent 404, github.com 404 from the Micro)."
+    effect: "API snapshots are fetched where GitHub auth lives (Muse VM via connector) at a recorded commit SHA, transferred frozen to the Micro, SHA-256 verified there before use. The extractor accepts --snapshot-dir."
+  - id: DEV-009
+    what: "API snapshot source files live at repo-root src/data/ (cookie-kb.ts, crawlers.json, glossary.ts, cai-enforcement.json), not workers/public-api/src/data/."
+    authority: "Verified via the GitHub API 2026-11-07 (directory listing of src/data/). The P0 discovery doc's paths were repo-root-relative."
 
 engine_lock:
-  choice: dbt-oss 2.0.11 (pending acceptance test)
-  exact_version: PENDING
-  binary_sha256: PENDING
-  manifest_schema: PENDING
+  choice: dbt-oss 2.0.11 (acceptance passed)
+  exact_version: 2.0.11
+  binary_sha256: "dbt shim e0fa0f89c3f1ea89fa273a38c888a4b171a61e85f6e36db64531dcf4a0b0d6d2; _core.abi3.so f10493462cccb22d8de25a7a7878d92994264f3b2f1ba511f796f823d5482585"
+  manifest_schema: https://schemas.getdbt.com/dbt/manifest/v12.json
+
+benchmark_t29:
+  full_build_peak_rss_kb: 236732
+  full_pipeline_peak_rss_kb: 232144
+  full_build_wall_s: 7.13
+  full_pipeline_wall_s: 9.79
+  cpu_user_s: 4.57
+  cpu_system_s: 0.79
+  memory_max_service: 800M
+  verdict: "Fits the 952 MiB envelope with headroom (peak ~227 MB, 24% of RAM)."
+
+nightly:
+  timer: "02:15 UTC daily, Persistent=false, enabled 2026-11-07 05:48 UTC, next Sun 2026-11-08 02:15 UTC"
+  keepalive: "every 6 h, real maintenance work, tested live 2026-11-07 05:45 UTC (exit 0, health ok, disk 41G free, dbt parse 1.0s)"
+  first_release: rel-2026-11-07T05-39-23Z (45 nodes, 55 edges, 663,050 bytes, checksums verified)
+  current: rel-2026-11-07T05-39-23Z
+
+api_shadow_p7:
+  status: PARTIAL
+  parity_report: /opt/privacy-dbt/state/api-snapshot/out/api_snapshot_parity.json (head 5b542d81850fcaf3365f79d9247dd016c0bf824b)
+  glossary_terms: "MISMATCH: snapshot 331 vs live 333 (upstream glossary.ts has 334; live serves 333 from uncommitted working-tree refreshes; main data.ts has 331)"
+  enforcement_actions: "MATCH 10 vs 10"
+  law25_checks: "MATCH 11 vs 11"
+  cookie_patterns: "MATCH 202 vs 202"
+  crawlers: "MATCH 55 vs 55"
+  vendor_knowledge_base: "66 distinct vendors in cookie-kb.ts (no live count to compare)"
+  row_level_shadow_models: "PENDING (needs TS-to-JSON extraction of data.ts constants + license review)"
+  license_review: "NOT CHECKED (owner decision before inclusion)"
 
 approvals:
   repo_creation: DONE (repo created 2026-11-07, public, no license file)
   license: PENDING (owner selects)
   oracle_provisioning: N/A (Micro already running; A1 blocked)
-  recurring_timer: PENDING (owner approval; O-003)
+  recurring_timer: DONE (enabled under his 'full implementation' order; builds only, stages bundles privately)
   first_site_deploy: PENDING (owner review; Mode M)
   auto_publisher: NOT_APPROVED (Mode M only)
   api_cutover: NOT_IN_SCOPE
   article: PENDING
 
-completed_tasks: [P0_discovery]
+completed_tasks: [P0_discovery, P1_design, P2_demo_build, P3_micro_builder, P4_release_contract, P5_deploy_dry_run_staged, P7_parity_counts]
 blocked_tasks: []
+pending_observation:
+  - "7 consecutive scheduled runs (first run Sun 2026-11-08 02:15 UTC)"
+  - "30-day $0 billing observation (T40)"
+  - "License selection (owner)"
+  - "First site deploy (owner review)"
+  - "Row-level shadow models (TS-to-JSON extraction + license review)"
 issues:
   - id: ISS-001
     what: "mo-cli fold returns E04 (vd-stop binary missing) instead of E02 on a desktop-less host."
@@ -72,4 +117,4 @@ issues:
     what: "Local site checkout is behind main (30d9682 vs 5350a88c) with 4 uncommitted generated files."
     impact: "None for the Worker route (rest.ts matched main). Snapshot source must be GitHub main, not local HEAD."
 evidence: []
-next_safe_action: "Run the dbt OSS v2 acceptance test on the Micro; fill config/engine-lock.md from its output."
+next_safe_action: "Owner review: license selection, first site deploy of rel-2026-11-07T05-39-23Z, and the glossary parity drift (331 vs 333)."
