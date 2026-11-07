@@ -35,7 +35,12 @@ models:
                 to: ref('stg_demo_assets')
                 field: asset_id
       - name: vendor_id
-        description: "Null allowed for activities with no vendor (ACT-004)."
+        description: "Null allowed for activities with no vendor (ACT-004). Non-null values must exist in stg_demo_vendors."
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('stg_demo_vendors')
+                field: vendor_id
       - name: retention_rule_id
         data_tests:
           - not_null
