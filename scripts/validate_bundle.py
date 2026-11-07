@@ -40,16 +40,22 @@ def main():
         fail("public_graph.json schema mismatch")
     if graph["counts"]["nodes"] > 500 or graph["counts"]["edges"] > 2000:
         fail("graph exceeds policy size")
+    # The release set is only these files. The run dir also holds the
+    # project/ copy (with profiles.yml) and work/*.duckdb — build-plane
+    # internals that never enter a release and must NOT be scanned here.
+    release_files = ["public_graph.json", "manifest.json", "run_results.json"]
+    if os.path.exists(os.path.join(run_dir, "catalog.json")):
+        release_files.append("catalog.json")
     total = 0
-    for root, _, names in os.walk(run_dir):
-        for n in names:
-            p = os.path.join(root, n)
-            rel = os.path.relpath(p, run_dir)
-            if n.endswith(FORBIDDEN_SUFFIXES) or n in FORBIDDEN_NAMES:
-                fail(f"forbidden file in run dir: {rel}")
-            total += os.path.getsize(p)
+    for fname in release_files:
+        p = os.path.join(run_dir, fname)
+        if not os.path.exists(p):
+            fail(f"release file missing: {fname}")
+        if fname.endswith(FORBIDDEN_SUFFIXES) or fname in FORBIDDEN_NAMES:
+            fail(f"forbidden file in release set: {fname}")
+        total += os.path.getsize(p)
     if total > MAX_BUNDLE_BYTES:
-        fail(f"run dir {total} bytes > {MAX_BUNDLE_BYTES}")
+        fail(f"release set {total} bytes > {MAX_BUNDLE_BYTES}")
     # Secret/PII scan over the public files only.
     for fname in ("public_graph.json",):
         p = os.path.join(run_dir, fname)

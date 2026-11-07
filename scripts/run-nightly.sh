@@ -56,12 +56,15 @@ python3 "$BASE/scripts/export_graph.py" \
   --out "$RUN_DIR/public_graph.json"
 python3 "$BASE/scripts/validate_bundle.py" --run-dir "$RUN_DIR" || exit 1
 # Immutable release bundle with checksums.
+# The bundle holds only the frozen core artifacts. The full target/
+# (docs assets + compiled SQL) stays in the run directory as evidence;
+# it never enters the bundle, and compiled SQL never leaves the build plane.
 RELEASE_ID="rel-$RUN_ID"
 REL_DIR="$BASE/releases/$RELEASE_ID"
 mkdir -p "$REL_DIR"
 cp "$RUN_DIR/public_graph.json" "$REL_DIR/"
 cp "$RUN_DIR/manifest.json" "$REL_DIR/manifest.json"
-cp -r "$RUN_DIR/target" "$REL_DIR/target"
+cp "$RUN_DIR/catalog.json" "$REL_DIR/" 2>/dev/null || true
 cp "$RUN_DIR/run_results.json" "$REL_DIR/"
 python3 - "$REL_DIR" "$HEAD_SHA" "$RUN_ID" "$DURATION" << 'PYEOF'
 import hashlib, json, sys, os
