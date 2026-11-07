@@ -148,7 +148,7 @@ def main():
         live_count = live.get(fam)
         families.append({
             "family": fam,
-            "source_file": FILES[fname]["path"],
+            "source_file": FILES[fname],
             "constant": const,
             "key_field": key,
             "snapshot_count": count,
@@ -161,7 +161,7 @@ def main():
     vendors = set(re.findall(r"vendor\s*:\s*['\"]([^'\"]+)['\"]", kb))
     families.append({
         "family": "vendor_knowledge_base",
-        "source_file": FILES["cookie-kb.ts"]["path"],
+        "source_file": FILES["cookie-kb.ts"],
         "constant": "NONE (derived from COOKIE_PATTERNS vendor/legalParty)",
         "key_field": "vendor / legalParty",
         "snapshot_count": len(vendors),
