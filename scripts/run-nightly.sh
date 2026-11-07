@@ -7,6 +7,9 @@
 # - NEVER deploy to the live site. Mode M: the bundle stages for owner review.
 # - On any failure: no publish, no partial release, state.yaml updated.
 set -u
+# dbt lives in the dbt-runner uv tool bin. Non-interactive shells do not
+# carry ~/.local/bin on PATH, so set it explicitly (do not rely on login).
+export PATH="/opt/privacy-dbt/.local/bin:$HOME/.local/bin:$PATH"
 BASE="${PRIVACY_DBT_BASE:-/opt/privacy-dbt}"
 REPO="${REPO:-$BASE/repo}"
 RUN_ID="$(date -u +%Y-%m-%dT%H-%M-%SZ)"
