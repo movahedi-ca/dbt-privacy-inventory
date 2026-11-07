@@ -1,0 +1,8 @@
+# Copy to profiles.yml. No secrets. DuckDB file lives in work/ (never committed).
+dbt_privacy_inventory:
+  target: dev
+  outputs:
+    dev:
+      type: duckdb
+      path: work/dbt_privacy_inventory.duckdb
+      threads: 2

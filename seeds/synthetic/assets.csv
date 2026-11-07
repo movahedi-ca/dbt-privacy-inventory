@@ -1,0 +1,7 @@
+asset_id,asset_name,classification,owner,data_category
+AST-001,Fictional CRM — Québec region,confidential,Privacy Office,customer
+AST-002,Fictional support mailbox,internal,Support Lead,employee
+AST-003,Fictional analytics warehouse,internal,,product
+AST-004,Fictional marketing list,restricted,Marketing Lead,customer
+AST-005,Fictional HR records,confidential,People Team,employee
+AST-006,Fictional public website logs,public,Web Team,website

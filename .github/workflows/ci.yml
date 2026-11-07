@@ -1,0 +1,35 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4.2.2
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5.4.2
+      - name: Install pinned dbt OSS
+        run: uv tool install dbt-oss==2.0.11
+      - name: Copy example profile
+        run: cp profiles.yml.example profiles.yml
+      - name: Parse
+        run: dbt parse
+      - name: Build (models, tests, seeds)
+        run: dbt build
+      - name: Docs generate
+        run: dbt docs generate
+      - name: Secret scan (no secrets in the repo)
+        run: |
+          ! grep -RInE "(api[_-]?key|password|secret|token)[\"']?\s*[:=]\s*[\"'][^\"']{8,}" \
+            --include="*.yml" --include="*.yaml" --include="*.md" --include="*.sql" \
+            --include="*.csv" --include="*.json" . || (echo "secret-like string found" && exit 1)
+      - name: Forbidden files
+        run: |
+          ! find . -name "*.duckdb" -o -name "profiles.yml" -o -path "./target/*" | grep -q . || (echo "forbidden file present" && exit 1)

@@ -1,0 +1,9 @@
+target/
+logs/
+work/
+*.duckdb
+*.duckdb.wal
+dbt_packages/
+profiles.yml
+.env
+.DS_Store

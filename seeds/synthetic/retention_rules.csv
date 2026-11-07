@@ -1,0 +1,5 @@
+rule_id,rule_name,period_value,period_unit,applies_to
+RET-001,Customer account records,7,years,customer
+RET-002,Support and marketing records,2,years,customer
+RET-003,Aggregate analytics,13,months,product
+RET-004,Payroll records,7,years,employee

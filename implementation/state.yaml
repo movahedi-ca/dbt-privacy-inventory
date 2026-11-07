@@ -1,0 +1,75 @@
+# dbt-privacy-inventory implementation state (restricted operational storage)
+# Tri-state: VERIFIED_TRUE / VERIFIED_FALSE / NOT_CHECKED. Never mark PASS
+# without stored, checksum-recorded evidence.
+
+project: dbt-privacy-inventory
+playbook: ~/workspace/user/files/dbt-1-2-3-4-Oracle-VM-Playbook-V3_5_v4mt.md
+playbook_version: "3.0"
+playbook_status: DESIGN (execution approved by owner order 2026-11-06 23:38 EST)
+phase: P1_design
+engineering_status: IN_PROGRESS
+production_status: NOT_DEPLOYED
+nightly_build_status: NOT_CONFIGURED
+published_release_id: null
+last_updated_utc: 2026-11-07T05:15:00Z
+
+verified:
+  oracle_account_free_only: VERIFIED_TRUE
+  x86_64_engine: NOT_CHECKED
+  site_deploy_plane: VERIFIED_TRUE
+  public_manifest_safe: NOT_CHECKED
+  api_contracts: VERIFIED_TRUE
+  owner_release_approval: NOT_CHECKED
+
+deviations:
+  - id: DEV-001
+    what: "Build plane is the Micro (x86_64, 1 OCPU / 952 MiB RAM), not the playbook A1 ARM target (aarch64, 2 OCPU / 12 GB)."
+    authority: "Owner order 2026-11-06 23:38 EST ('do the full implementation of 1,2,3,4' on the Micro)."
+    effect: "T01/T02/T03 adapt to x86_64 equivalents. A1 remains blocked (capacity + 429; retry watcher disabled)."
+  - id: DEV-002
+    what: "MO installed from remote main HEAD fad4fc9, not tag v0.1.0."
+    authority: "Coordinator decision, recorded 2026-11-07. Tag predates his Nov 6 'Apply all fixes' order (99 tests vs 123 on main, schema v4 missing from tag)."
+    effect: "MO on the Micro has the 19 fixes + S1 Step 1 usage measurement."
+  - id: DEV-003
+    what: "Health service runs as a system service, not under an MO lease."
+    authority: "Coordinator decision, recorded 2026-11-07. TASK-013 wording fits chromebook-vm; the tunnel ingress needs the endpoint always up."
+  - id: DEV-004
+    what: "Temp SSH ingress /32s stay until the end of the run."
+    authority: "Coordinator decision, recorded 2026-11-07. They are the only SSH path to the Micro; Phase B needs them. Remove after all Micro work, before the final report."
+  - id: DEV-005
+    what: "Worker route rate limit reuses quotaGate (2,000/day/IP) + isolate limiter, not the playbook 100 req/10s/IP window."
+    authority: "Coordinator decision, recorded 2026-11-07. No existing limiter uses a 10 s window; a dedicated limiter is a follow-up."
+  - id: DEV-006
+    what: "Keepalive is real maintenance work (health/integrity checks), not a busy-loop."
+    authority: "Brief instruction + V2 section 2.3 tension resolved in the coordinator run. Documented in the evidence ledger."
+
+engine_lock:
+  choice: dbt-oss 2.0.11 (pending acceptance test)
+  exact_version: PENDING
+  binary_sha256: PENDING
+  manifest_schema: PENDING
+
+approvals:
+  repo_creation: DONE (repo created 2026-11-07, public, no license file)
+  license: PENDING (owner selects)
+  oracle_provisioning: N/A (Micro already running; A1 blocked)
+  recurring_timer: PENDING (owner approval; O-003)
+  first_site_deploy: PENDING (owner review; Mode M)
+  auto_publisher: NOT_APPROVED (Mode M only)
+  api_cutover: NOT_IN_SCOPE
+  article: PENDING
+
+completed_tasks: [P0_discovery]
+blocked_tasks: []
+issues:
+  - id: ISS-001
+    what: "mo-cli fold returns E04 (vd-stop binary missing) instead of E02 on a desktop-less host."
+    impact: "Low. Refusal still happens, wrong code. No desktops on the Micro."
+  - id: ISS-002
+    what: "Cloudflare Access app + service token for vm-api.movahedi.ca do not exist; tunnel token cannot create them."
+    impact: "The vm-health upstream is unauthenticated until Access lands. Payload is status info only."
+  - id: ISS-003
+    what: "Local site checkout is behind main (30d9682 vs 5350a88c) with 4 uncommitted generated files."
+    impact: "None for the Worker route (rest.ts matched main). Snapshot source must be GitHub main, not local HEAD."
+evidence: []
+next_safe_action: "Run the dbt OSS v2 acceptance test on the Micro; fill config/engine-lock.md from its output."

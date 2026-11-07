@@ -1,0 +1,113 @@
+version: 2
+
+models:
+  - name: stg_demo_assets
+    description: "Fictional asset inventory records; not real organizations or persons."
+    columns:
+      - name: asset_id
+        description: "Unique synthetic asset key."
+        data_tests:
+          - unique
+          - not_null
+      - name: classification
+        description: "Data classification: public, internal, confidential, restricted."
+        data_tests:
+          - accepted_values:
+              values: ["public", "internal", "confidential", "restricted"]
+      - name: owner
+        description: "Named owner. Null allowed where no owner is assigned (AST-003)."
+  - name: stg_demo_activities
+    description: "Fictional processing activities used for lineage demonstration."
+    columns:
+      - name: activity_id
+        data_tests:
+          - unique
+          - not_null
+      - name: purpose
+        data_tests:
+          - not_null
+      - name: asset_id
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_demo_assets')
+                field: asset_id
+      - name: vendor_id
+        description: "Null allowed for activities with no vendor (ACT-004)."
+      - name: retention_rule_id
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_demo_retention')
+                field: rule_id
+      - name: status
+        data_tests:
+          - accepted_values:
+              values: ["active", "paused", "retired"]
+  - name: stg_demo_vendors
+    description: "Fictional processors and risk flags."
+    columns:
+      - name: vendor_id
+        data_tests:
+          - unique
+          - not_null
+      - name: risk_tier
+        data_tests:
+          - accepted_values:
+              values: ["low", "medium", "high"]
+  - name: stg_demo_retention
+    description: "Fictional retention policy references."
+    columns:
+      - name: rule_id
+        data_tests:
+          - unique
+          - not_null
+      - name: period_unit
+        data_tests:
+          - accepted_values:
+              values: ["days", "months", "years"]
+  - name: int_demo_activity_links
+    description: "Derived activity-to-asset/vendor dependencies. Left joins keep unresolved references visible."
+    columns:
+      - name: activity_id
+        data_tests:
+          - unique
+          - not_null
+  - name: int_demo_risk_flags
+    description: "Explicit, explainable demo risk rules. Deterministic, not inferred."
+    columns:
+      - name: activity_id
+        data_tests:
+          - unique
+          - not_null
+      - name: risk_flag
+        data_tests:
+          - accepted_values:
+              values: ["none", "vendor_high_risk", "restricted_data", "unresolved_reference"]
+  - name: mart_demo_ropa
+    description: "One fictional ROPA-like report for the article. Teaching example, not a statutory ROPA."
+    columns:
+      - name: activity_id
+        data_tests:
+          - unique
+          - not_null
+      - name: purpose
+        data_tests:
+          - not_null
+      - name: asset_id
+        data_tests:
+          - not_null
+      - name: retention_rule_id
+        data_tests:
+          - not_null
+  - name: mart_demo_vendor_risk
+    description: "Synthetic vendor risk examples."
+    columns:
+      - name: vendor_id
+        data_tests:
+          - unique
+          - not_null
+  - name: mart_demo_inventory_summary
+    description: "Counts and public demo QA. Counts reconcile to upstream."

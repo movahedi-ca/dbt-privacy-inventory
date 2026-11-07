@@ -1,0 +1,31 @@
+name: dbt_privacy_inventory
+version: 0.1.0
+config-version: 2
+profile: dbt_privacy_inventory
+
+model-paths: ["models"]
+analysis-paths: ["analyses"]
+test-paths: ["tests"]
+seed-paths: ["seeds"]
+macro-paths: ["macros"]
+snapshot-paths: ["snapshots"]
+docs-paths: ["docs"]
+
+target-path: "target"
+clean-targets:
+  - "target"
+  - "dbt_packages"
+  - "work"
+
+models:
+  dbt_privacy_inventory:
+    staging:
+      +materialized: view
+    intermediate:
+      +materialized: view
+    marts:
+      +materialized: table
+
+seeds:
+  dbt_privacy_inventory:
+    +quote_columns: false

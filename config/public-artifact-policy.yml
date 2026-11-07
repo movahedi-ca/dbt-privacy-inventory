@@ -1,0 +1,30 @@
+# Public artifact policy: what may leave the build plane.
+# Anything not listed here stays restricted (logs, manifest, db, compiled SQL).
+# First publication and every new dataset family require human review.
+allowlist:
+  - public_graph.json
+  - docs/index.html
+  - docs/assets/**
+  - data-quality-summary.json
+  - release.json
+  - current.json
+forbid:
+  - manifest.json (raw; only the sanitized public_graph.json goes out)
+  - catalog.json (raw; only via the reviewed docs bundle)
+  - "*.duckdb"
+  - "*.log"
+  - compiled SQL
+  - source file paths
+  - usernames, environment values, credentials
+  - row samples, warehouse names
+  - arbitrary HTML in labels (encode as text)
+limits:
+  max_graph_nodes: 500
+  max_graph_edges: 2000
+  max_graph_depth: 10
+  max_label_chars: 200
+  max_bundle_bytes: 5000000
+scan:
+  - secrets (api keys, passwords, tokens, private keys)
+  - personal data (emails, phones, real names, IPs, real cookie IDs)
+  - absolute paths and home-directory paths

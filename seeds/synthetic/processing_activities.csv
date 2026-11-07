@@ -1,0 +1,8 @@
+activity_id,activity_name,purpose,asset_id,vendor_id,retention_rule_id,status
+ACT-001,Customer onboarding,Create and verify customer accounts,AST-001,VND-001,RET-001,active
+ACT-002,Support ticket handling,Respond to customer support requests,AST-002,VND-002,RET-002,active
+ACT-003,Product usage analytics,Measure feature use in aggregate,AST-003,VND-003,RET-003,active
+ACT-004,Marketing email campaign,Send opted-in marketing email,AST-004,,RET-002,paused
+ACT-005,Payroll processing,Pay employees and remit deductions,AST-005,VND-004,RET-004,active
+ACT-006,Website analytics,Count visits and referrers,AST-006,VND-003,RET-003,active
+ACT-007,Customer feedback survey,Collect voluntary satisfaction feedback,AST-001,VND-002,RET-002,retired

@@ -1,0 +1,6 @@
+vendor_id,vendor_name,vendor_type,risk_tier,country
+VND-001,Fictional Identity Co,identity,medium,Canada
+VND-002,Fictional Helpdesk Ltd,support,low,Canada
+VND-003,Fictional Metrics Inc,analytics,high,United States
+VND-004,Fictional Payroll Services,payroll,medium,Canada
+VND-005,Fictional Archive Vault,storage,low,Canada
