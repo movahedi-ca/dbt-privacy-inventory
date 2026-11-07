@@ -27,6 +27,7 @@ Requires the pinned engine (see `config/engine-lock.md`).
 uv tool install dbt-oss==2.0.11
 dbt --version   # must start with 2.
 cp profiles.yml.example profiles.yml
+mkdir -p work   # DuckDB cannot create the file if the directory is missing
 dbt parse
 dbt build
 dbt docs generate

@@ -13,7 +13,8 @@ models:
         description: "Data classification: public, internal, confidential, restricted."
         data_tests:
           - accepted_values:
-              values: ["public", "internal", "confidential", "restricted"]
+              arguments:
+                values: ["public", "internal", "confidential", "restricted"]
       - name: owner
         description: "Named owner. Null allowed where no owner is assigned (AST-003)."
   - name: stg_demo_activities
@@ -45,7 +46,8 @@ models:
       - name: status
         data_tests:
           - accepted_values:
-              values: ["active", "paused", "retired"]
+              arguments:
+                values: ["active", "paused", "retired"]
   - name: stg_demo_vendors
     description: "Fictional processors and risk flags."
     columns:
@@ -56,7 +58,8 @@ models:
       - name: risk_tier
         data_tests:
           - accepted_values:
-              values: ["low", "medium", "high"]
+              arguments:
+                values: ["low", "medium", "high"]
   - name: stg_demo_retention
     description: "Fictional retention policy references."
     columns:
@@ -67,7 +70,8 @@ models:
       - name: period_unit
         data_tests:
           - accepted_values:
-              values: ["days", "months", "years"]
+              arguments:
+                values: ["days", "months", "years"]
   - name: int_demo_activity_links
     description: "Derived activity-to-asset/vendor dependencies. Left joins keep unresolved references visible."
     columns:
@@ -85,7 +89,8 @@ models:
       - name: risk_flag
         data_tests:
           - accepted_values:
-              values: ["none", "vendor_high_risk", "restricted_data", "unresolved_reference"]
+              arguments:
+                values: ["none", "vendor_high_risk", "restricted_data", "unresolved_reference"]
   - name: mart_demo_ropa
     description: "One fictional ROPA-like report for the article. Teaching example, not a statutory ROPA."
     columns:

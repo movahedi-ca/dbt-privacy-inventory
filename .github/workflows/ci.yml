@@ -18,7 +18,9 @@ jobs:
       - name: Install pinned dbt OSS
         run: uv tool install dbt-oss==2.0.11
       - name: Copy example profile
-        run: cp profiles.yml.example profiles.yml
+        run: |
+          cp profiles.yml.example profiles.yml
+          mkdir -p work
       - name: Parse
         run: dbt parse
       - name: Build (models, tests, seeds)
