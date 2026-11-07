@@ -34,7 +34,10 @@ cd "$RUN_DIR/project" || exit 1
 cp profiles.yml.example profiles.yml
 mkdir -p work
 START="$(date +%s)"
-dbt build > "$RUN_DIR/dbt-build.log" 2>&1
+# --write-catalog: dbt-oss writes no catalog.json by default (2.0.8 fixed
+# `dbt build --write-catalog` to write target/catalog.json again).
+# The first release lacked catalog.json because the build ran without it.
+dbt build --write-catalog > "$RUN_DIR/dbt-build.log" 2>&1
 BUILD_RC=$?
 dbt docs generate > "$RUN_DIR/dbt-docs.log" 2>&1
 DOCS_RC=$?

@@ -45,7 +45,7 @@ deviations:
   - id: DEV-007
     what: "dbt OSS v2 does not emit catalog.json. `dbt docs generate` reads info_schema/v1/ instead."
     authority: "Observed live 2026-11-07 (target/ has no catalog.json after a successful docs generate)."
-    effect: "Release bundle holds manifest.json + run_results.json + public_graph.json (+ release.json, checksums). No catalog.json."
+    effect: "Release bundle holds manifest.json + run_results.json + public_graph.json (+ release.json, checksums). CORRECTED 2026-11-07 ~05:55 UTC by the engine research report: `dbt build --write-catalog` writes target/catalog.json (fixed in 2.0.8). The first release lacked catalog.json only because the build ran without the flag. run-nightly.sh now passes --write-catalog. NOT verified live on the Micro yet (SSH ingress removed at end of run); verify on the next Micro access and sync the updated scripts."
   - id: DEV-008
     what: "The Micro cannot fetch the private site repo (movahedi-ca/movahedi-ca is private; the Micro has no GitHub credentials by design)."
     authority: "Observed live 2026-11-07 (raw.githubusercontent 404, github.com 404 from the Micro)."

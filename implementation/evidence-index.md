@@ -25,7 +25,8 @@ Every gate needs stored, checksum-recorded evidence. This file is the index.
 
 ## G-PRIVACY + G-ARTIFACT (DONE 2026-11-07 05:39 UTC)
 - Graph exporter + bundle validator: scripts/export_graph.py, scripts/validate_bundle.py. First bundle rel-2026-11-07T05-39-23Z: 45 nodes, 55 edges, 663,050 bytes, checksums verified (all OK). PII validator test: injected email into a node description, validator blocked it (exit 1).
-- Deviation DEV-007: dbt v2 does not emit catalog.json; the bundle holds manifest.json + run_results.json + public_graph.json.
+- Deviation DEV-007 (CORRECTED 2026-11-07 ~05:55 UTC by the engine research report): dbt-oss writes no catalog.json by default, but `dbt build --write-catalog` writes target/catalog.json (fixed in 2.0.8). The first release lacked catalog.json only because the build ran without the flag. run-nightly.sh now passes --write-catalog. NOT verified live on the Micro yet (SSH ingress removed at end of run); verify on the next Micro access and sync the updated scripts.
+- Engine research report (subagent, completed 2026-11-07T04:56:19Z, delivered late): confirms dbt-oss 2.0.11, DuckDB 1.5.4 bundled, manifest v12, no sign-in, no paid boundary for local DuckDB use. Fallback pin corrected to dbt-core 1.12.6 + dbt-duckdb 1.11.1 (docs page; GitHub releases listed 1.11.17 — sources disagree, docs page is the pin). No official SHA-256 exists for any v2 binary (pin by version + install channel, not hash). Docs v2 viewers need internet (DuckDB-WASM from a CDN).
 
 ## G-DEPLOY / G-PUBLISH (STAGED, NOT DEPLOYED - owner review)
 - Mode M only. Bundle stages at /opt/privacy-dbt/releases/rel-2026-11-07T05-39-23Z/. Live deploy held for owner review. He is asleep; do not deploy.

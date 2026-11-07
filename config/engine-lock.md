@@ -32,4 +32,5 @@ negative_tests:
   T06 missing vendor FK (VND-999): build fails (relationships test, 1 failed row) - VERIFIED 2026-11-07 (required adding the vendor_id relationship test; nulls are ignored by the test, so ACT-004 still passes)
   T07 unknown status: not yet run (accepted_values test covers it; same mechanism as T05/T06)
 approval: PENDING (owner; gate sign-off stays with him)
-fallback: dbt Core v1.11.17 + matching dbt-duckdb adapter (only if v2 fails an essential acceptance test; never mixed in one environment). NOT NEEDED: v2 passed.
+fallback: dbt Core v1.12.6 + dbt-duckdb 1.11.1 (per docs.getdbt.com/docs/dbt-versions; the GitHub releases page listed dbt-core 1.11.17 as latest v1 — the two sources disagree; the docs page is the pin). Only if v2 fails an essential acceptance test; never mixed in one environment. NOT NEEDED: v2 passed.
+catalog_note: "dbt-oss writes no catalog.json by default. `dbt build --write-catalog` writes target/catalog.json (fixed in 2.0.8). The first release (rel-2026-11-07T05-39-23Z) lacked catalog.json because the build ran without the flag. run-nightly.sh now passes --write-catalog. NOT verified live on the Micro yet (SSH ingress removed at end of run); verify on the next Micro access."
