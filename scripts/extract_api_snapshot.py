@@ -44,7 +44,9 @@ def extract_array(source, const):
     """Extract the array literal assigned to `export const NAME = [...]`
     (or `const NAME = [...]`) and count its top-level elements by bracket
     depth. Returns (count, array_text) or (None, None)."""
-    m = re.search(r"(?:export\s+)?const\s+" + re.escape(const) + r"(?:\s*:\s*[^=\[]+)?=\s*\[", source)
+    # Declaration form: export const NAME: Type[] = [ ... ] (type annotation
+    # contains brackets, so match up to the first '=' after the name).
+    m = re.search(r"(?:export\s+)?const\s+" + re.escape(const) + r"\b[^=]*=\s*\[", source)
     if not m:
         return None, None
     i = m.end() - 1
