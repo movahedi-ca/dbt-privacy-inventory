@@ -1,0 +1,21 @@
+dbt-privacy-inventory
+Copyright 2026 Mohammad Movahedi
+Affiliation: Mohammad Movahedi, Founder, Movahedi Solutions, 1000823315 ONTARIO INC.
+
+Licensed under the Apache License, Version 2.0.
+
+Synthetic data notice: The seed data and demo records in this project are synthetic and fictional, are not a real organization, and the fictional markers and synthetic warnings in the data files stay attached on redistribution.
+
+Engine notice: This project builds with dbt OSS 2.0.11, Copyright dbt Labs, licensed under the Apache License, Version 2.0. dbt OSS is used, not vendored, and is not part of the licensed scope of this project.
+
+Database notice: This project uses DuckDB v1.5.4, bundled with the pinned engine, Copyright Stichting DuckDB Foundation, licensed under the MIT License. DuckDB is used, not vendored, and is not part of the licensed scope of this project.
+
+Transitive notice: The pinned engine environment also uses mashumaro and msgpack under the Apache License, Version 2.0, and typing-extensions under the Python Software Foundation License.
+
+Source attribution notice: Enforcement entries keep their source_url and source_label fields; cookie pattern entries keep their source field; crawler entries keep their vendor document and source note fields. Redistribution of those datasets must keep those fields attached to each entry.
+
+Glossary notice: Glossary definitions are educational summaries, not legal advice. The note stays attached where the definitions are carried.
+
+Exclusion notice: The public scope of this license is the allowlist in the TASK-021 decision package, EVD-021 section 5.1. Internal bundle artifacts (raw manifest.json, catalog.json, run_results.json, the internal release.json, DuckDB files, logs, and compiled SQL) are private under flag PRIVATE-C11 and are not licensed for public use.
+
+Irrevocability note: The grants in sections 2 and 3 of the Apache License, Version 2.0 are perpetual and irrevocable, except for the patent litigation termination stated in section 3. A later change to the license file applies going forward only and does not retract grants already received.
