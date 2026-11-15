@@ -47,8 +47,8 @@ The DuckDB file lands in `work/` (never committed, never published).
 
 ## License
 
-Pending owner selection. No license file is included until the owner selects
-one. Until then, all rights reserved by default.
+Licensed under the Apache License, Version 2.0. See the LICENSE file at the
+repo root and the NOTICE file for holder, scope, and attribution terms.
 
 ## Status
 
