@@ -12,6 +12,8 @@ of Law 25 compliance, or guarantee that no future bill could ever occur.
 Declared dbt dependency lineage is not observed runtime access, not proof of
 deletion or enforcement, and not legal compliance.
 
+Backend documentation: see [docs/BACKEND.md](docs/BACKEND.md) for the system map, file map, invariants, and change protocol for this system. Read it before changing the nightly builder, the release format, or the public output.
+
 ## What this proves
 
 - A version-controlled dbt dependency graph (`seed -> staging -> intermediate -> mart`).
