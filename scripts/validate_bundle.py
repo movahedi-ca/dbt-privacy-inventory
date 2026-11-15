@@ -9,6 +9,14 @@ Checks (fail closed, exit 1 on any failure):
 - Secret/PII scan over public files: api keys, passwords, tokens,
   private keys, emails, phone-like strings, real cookie IDs.
 - Bundle size within the 5 MB policy limit.
+- Result coverage (TASK-008): the frozen run_results.json must be a
+  build invocation, its invocation_id must match the frozen bundle
+  record when one is present, and its result ID set must equal the
+  expected executed-node set exactly (IDs unique, expected set
+  nonempty, statuses in the approved set, no fail or error status).
+  The expected set is expected_result_ids.json when the run directory
+  holds one (fixture form), else the manifest nodes whose
+  resource_type is model, seed, test, or snapshot.
 """
 import argparse, json, os, re, sys
 
@@ -21,6 +29,9 @@ SECRET_PATTERNS = [
 ]
 FORBIDDEN_SUFFIXES = (".duckdb", ".duckdb.wal", ".log")
 FORBIDDEN_NAMES = ("profiles.yml",)
+RESULT_TYPES = ("model", "seed", "test", "snapshot")
+ALLOWED_STATUSES = ("success", "pass", "fail", "error", "skipped")
+FAILED_STATUSES = ("fail", "error")
 
 def fail(msg):
     print(f"VALIDATION FAILED: {msg}", file=sys.stderr)
@@ -56,6 +67,73 @@ def main():
         total += os.path.getsize(p)
     if total > MAX_BUNDLE_BYTES:
         fail(f"release set {total} bytes > {MAX_BUNDLE_BYTES}")
+    # Result coverage validation (TASK-008). Named failure reasons:
+    # INVOCATION_NOT_BUILD, INVOCATION_MISMATCH, RESULTS_MISSING,
+    # EXPECTED_EMPTY, RESULTS_EMPTY, RESULT_ID_DUPLICATE,
+    # RESULT_ID_MISSING, RESULT_ID_EXTRA, RESULT_STATUS_DISALLOWED,
+    # RESULT_STATUS_FAILED.
+    with open(os.path.join(run_dir, "manifest.json")) as f:
+        manifest = json.load(f)
+    with open(os.path.join(run_dir, "run_results.json")) as f:
+        run_results = json.load(f)
+    metadata = run_results.get("metadata") or {}
+    rargs = run_results.get("args") or {}
+    which = rargs.get("which") or rargs.get("command")
+    if which is not None and which != "build":
+        fail(f"INVOCATION_NOT_BUILD: run_results invocation is {which!r}, not 'build'")
+    record_inv = None
+    for rec_name in ("bundle_record.json", "release.json"):
+        rec_path = os.path.join(run_dir, rec_name)
+        if os.path.exists(rec_path):
+            with open(rec_path) as f:
+                rec = json.load(f)
+            if rec.get("invocation_id"):
+                record_inv = rec["invocation_id"]
+                break
+    if record_inv is not None and metadata.get("invocation_id") != record_inv:
+        fail(f"INVOCATION_MISMATCH: frozen record invocation {record_inv} "
+             f"!= run_results invocation {metadata.get('invocation_id')}")
+    results = run_results.get("results")
+    if results is None or not isinstance(results, list):
+        fail("RESULTS_MISSING: run_results.json has no results array")
+    exp_path = os.path.join(run_dir, "expected_result_ids.json")
+    if os.path.exists(exp_path):
+        with open(exp_path) as f:
+            exp_data = json.load(f)
+        expected = set(exp_data["expected_ids"] if isinstance(exp_data, dict) else exp_data)
+    else:
+        expected = {k for k, n in (manifest.get("nodes") or {}).items()
+                    if n.get("resource_type") in RESULT_TYPES}
+    if not expected:
+        fail("EXPECTED_EMPTY: expected executed-node set is empty")
+    if not results:
+        fail("RESULTS_EMPTY: run_results.json holds zero results")
+    ids = []
+    for r in results:
+        uid = r.get("unique_id")
+        if uid is None:
+            fail("RESULT_ID_MISSING: a result entry has no unique_id")
+        ids.append(uid)
+    seen, dups = set(), set()
+    for i in ids:
+        if i in seen:
+            dups.add(i)
+        seen.add(i)
+    if dups:
+        fail(f"RESULT_ID_DUPLICATE: {sorted(dups)}")
+    actual = set(ids)
+    missing = expected - actual
+    if missing:
+        fail(f"RESULT_ID_MISSING: {sorted(missing)[:5]} ({len(missing)} missing)")
+    extra = actual - expected
+    if extra:
+        fail(f"RESULT_ID_EXTRA: {sorted(extra)[:5]} ({len(extra)} extra)")
+    for r in results:
+        st = r.get("status")
+        if st not in ALLOWED_STATUSES:
+            fail(f"RESULT_STATUS_DISALLOWED: {r.get('unique_id')} status {st!r}")
+        if st in FAILED_STATUSES:
+            fail(f"RESULT_STATUS_FAILED: {r.get('unique_id')} status {st!r}")
     # Secret/PII scan over the public files only.
     for fname in ("public_graph.json",):
         p = os.path.join(run_dir, fname)

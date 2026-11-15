@@ -1,0 +1,33 @@
+{
+  "args": {
+    "command": "build",
+    "which": "build"
+  },
+  "elapsed_time": 1.0,
+  "metadata": {
+    "dbt_version": "2.0.11",
+    "invocation_id": "inv-001"
+  },
+  "results": [
+    {
+      "execution_time": 0.1,
+      "status": "success",
+      "unique_id": "model.proj.a"
+    },
+    {
+      "execution_time": 0.1,
+      "status": "success",
+      "unique_id": "model.proj.a"
+    },
+    {
+      "execution_time": 0.1,
+      "status": "success",
+      "unique_id": "model.proj.b"
+    },
+    {
+      "execution_time": 0.1,
+      "status": "pass",
+      "unique_id": "test.proj.t"
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "args": {
+    "command": "compile",
+    "which": "compile"
+  },
+  "elapsed_time": 1.0,
+  "metadata": {
+    "dbt_version": "2.0.11",
+    "invocation_id": "inv-docs"
+  },
+  "results": []
+}

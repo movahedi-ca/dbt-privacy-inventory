@@ -1,14 +1,27 @@
 # Public artifact policy: what may leave the build plane.
 # Anything not listed here stays restricted (logs, manifest, db, compiled SQL).
 # First publication and every new dataset family require human review.
+# Location-aware contract (playbook sections 6.1 and 6.2, TASK-035):
+# the public set is exactly the four locations below and no others.
+# current.json and index.json live at the releases root only.
+# release.json and public_graph.json live in a release folder only.
 allowlist:
-  - public_graph.json
+  - path: public/dbt/releases/current.json
+    location: releases_root
+    file: current.json
+  - path: public/dbt/releases/index.json
+    location: releases_root
+    file: index.json
+  - path: public/dbt/releases/<release-id>/release.json
+    location: release_folder
+    file: release.json
+  - path: public/dbt/releases/<release-id>/public_graph.json
+    location: release_folder
+    file: public_graph.json
+forbid:
   - docs/index.html
   - docs/assets/**
   - data-quality-summary.json
-  - release.json
-  - current.json
-forbid:
   - manifest.json (raw; only the sanitized public_graph.json goes out)
   - catalog.json (raw; only via the reviewed docs bundle)
   - "*.duckdb"

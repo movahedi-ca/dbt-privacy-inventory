@@ -1,0 +1,15 @@
+{
+  "nodes": {
+    "model.proj.a": {
+      "depends_on": {
+        "nodes": []
+      },
+      "description": "",
+      "name": "a",
+      "resource_type": "model",
+      "tags": [
+        "tttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt"
+      ]
+    }
+  }
+}

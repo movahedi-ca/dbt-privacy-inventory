@@ -1,0 +1,47 @@
+{
+  "counts": {
+    "edges": 2,
+    "nodes": 3
+  },
+  "edges": [
+    {
+      "from": "model.proj.a",
+      "to": "model.proj.b"
+    },
+    {
+      "from": "model.proj.b",
+      "to": "test.proj.t"
+    }
+  ],
+  "nodes": [
+    {
+      "depends_on": [],
+      "description": "",
+      "id": "model.proj.a",
+      "name": "a",
+      "tags": [],
+      "type": "model"
+    },
+    {
+      "depends_on": [
+        "model.proj.a"
+      ],
+      "description": "",
+      "id": "model.proj.b",
+      "name": "b",
+      "tags": [],
+      "type": "model"
+    },
+    {
+      "depends_on": [
+        "model.proj.b"
+      ],
+      "description": "",
+      "id": "test.proj.t",
+      "name": "t",
+      "tags": [],
+      "type": "test"
+    }
+  ],
+  "schema": "public_graph/v1"
+}

@@ -1,0 +1,24 @@
+{
+  "nodes": {
+    "model.proj.m": {
+      "depends_on": {
+        "nodes": [
+          "source.proj.raw.upstream"
+        ]
+      },
+      "description": "",
+      "name": "m",
+      "resource_type": "model",
+      "tags": []
+    },
+    "source.proj.raw.upstream": {
+      "depends_on": {
+        "nodes": []
+      },
+      "description": "",
+      "name": "upstream",
+      "resource_type": "source",
+      "tags": []
+    }
+  }
+}

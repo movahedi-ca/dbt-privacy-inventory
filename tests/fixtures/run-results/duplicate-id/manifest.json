@@ -1,0 +1,38 @@
+{
+  "metadata": {
+    "invocation_id": "inv-manifest"
+  },
+  "nodes": {
+    "model.proj.a": {
+      "depends_on": {
+        "nodes": []
+      },
+      "description": "",
+      "name": "a",
+      "resource_type": "model",
+      "tags": []
+    },
+    "model.proj.b": {
+      "depends_on": {
+        "nodes": [
+          "model.proj.a"
+        ]
+      },
+      "description": "",
+      "name": "b",
+      "resource_type": "model",
+      "tags": []
+    },
+    "test.proj.t": {
+      "depends_on": {
+        "nodes": [
+          "model.proj.b"
+        ]
+      },
+      "description": "",
+      "name": "t",
+      "resource_type": "test",
+      "tags": []
+    }
+  }
+}
