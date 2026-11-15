@@ -1,0 +1,282 @@
+version: 2
+
+# Shadow family definitions for TASK-011 (playbook V4, D-04: shadow only).
+# Data: TASK-010 snapshot rows at source SHA
+# 54642b3267c0b11d5e6959077de56e4abf251c25. Public site data only,
+# per the TASK-036 rights review. No C-11 private artifact enters here.
+# These nodes are disabled unless DBT_SHADOW_ENABLED=true, so the
+# production nightly build node set is unchanged.
+
+seeds:
+  - name: shadow_src_glossary
+    description: "TASK-010 snapshot rows for the glossary family. Key: source id."
+    columns:
+      - name: row_key
+        data_tests: [unique, not_null]
+      - name: id
+        data_tests: [unique, not_null]
+      - name: name
+        data_tests: [not_null]
+      - name: definition
+        data_tests: [not_null]
+      - name: name_fr
+        data_tests: [not_null]
+      - name: definition_fr
+        data_tests: [not_null]
+      - name: french_completeness_status
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ["complete", "partial_marked"]
+  - name: shadow_src_enforcement
+    description: "TASK-010 snapshot rows for the enforcement family. Key: source_url (source rows carry no id)."
+    columns:
+      - name: row_key
+        data_tests: [unique, not_null]
+      - name: source_url
+        data_tests: [unique, not_null]
+      - name: date
+        data_tests: [not_null]
+      - name: respondent
+        data_tests: [not_null]
+      - name: issue
+        data_tests: [not_null]
+      - name: outcome
+        data_tests: [not_null]
+      - name: source_label
+        data_tests: [not_null]
+      - name: notes
+        data_tests: [not_null]
+      - name: regulator
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ["CAI", "OPC"]
+      - name: type
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ["decision", "order"]
+  - name: shadow_src_cookies
+    description: "TASK-010 snapshot rows for the cookie patterns family. Key: pattern."
+    columns:
+      - name: row_key
+        data_tests: [unique, not_null]
+      - name: pattern
+        data_tests: [unique, not_null]
+      - name: match
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ["exact", "prefix"]
+      - name: vendor
+        data_tests: [not_null]
+      - name: legal_party
+        data_tests: [not_null]
+      - name: purpose
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ["Analytics", "Marketing / Profiling", "Functional", "Security", "Strictly Necessary"]
+      - name: typical_retention
+        data_tests: [not_null]
+      - name: control_class
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ["a", "b"]
+      - name: source
+        data_tests: [not_null]
+      - name: review_date
+        data_tests: [not_null]
+  - name: shadow_src_law25
+    description: "TASK-010 snapshot rows for the Law 25 checks family. Key: source check id. The evaluate function field is not data and is absent."
+    columns:
+      - name: row_key
+        data_tests: [unique, not_null]
+      - name: id
+        data_tests: [unique, not_null]
+      - name: title
+        data_tests: [not_null]
+      - name: law
+        data_tests: [not_null]
+      - name: weight
+        data_tests: [not_null]
+      - name: blurb
+        data_tests: [not_null]
+  - name: shadow_src_crawlers
+    description: "TASK-010 snapshot rows for the crawlers family. Key: token."
+    columns:
+      - name: row_key
+        data_tests: [unique, not_null]
+      - name: token
+        data_tests: [unique, not_null]
+      - name: operator
+        data_tests: [not_null]
+      - name: purpose
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ["training", "search-index", "user-triggered", "other", "search-and-training"]
+      - name: status
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ["active", "renamed", "retired"]
+      - name: first_documented
+        data_tests: [not_null]
+      - name: honors_robots_txt
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ["yes", "no", "disputed"]
+      - name: vendor_doc_url
+        data_tests: [not_null]
+      - name: verified_at
+        data_tests: [not_null]
+
+models:
+  - name: shadow_glossary
+    description: "Shadow table for the glossary family, one row per source term. Shadow only; no live source reads this table."
+    columns:
+      - name: row_key
+        data_tests: [unique, not_null]
+      - name: id
+        data_tests: [unique, not_null]
+      - name: name
+        data_tests: [not_null]
+      - name: definition
+        data_tests: [not_null]
+      - name: name_fr
+        data_tests: [not_null]
+      - name: definition_fr
+        data_tests: [not_null]
+      - name: french_completeness_status
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ["complete", "partial_marked"]
+  - name: shadow_enforcement
+    description: "Shadow table for the enforcement family, one row per source action. Key is source_url; the API id is generator-derived and is not a source field."
+    columns:
+      - name: row_key
+        data_tests: [unique, not_null]
+      - name: source_url
+        data_tests: [unique, not_null]
+      - name: date
+        data_tests: [not_null]
+      - name: respondent
+        data_tests: [not_null]
+      - name: issue
+        data_tests: [not_null]
+      - name: outcome
+        data_tests: [not_null]
+      - name: source_label
+        data_tests: [not_null]
+      - name: notes
+        data_tests: [not_null]
+      - name: regulator
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ["CAI", "OPC"]
+      - name: type
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ["decision", "order"]
+  - name: shadow_cookies
+    description: "Shadow table for the cookie patterns family, one row per source pattern."
+    columns:
+      - name: row_key
+        data_tests: [unique, not_null]
+      - name: pattern
+        data_tests: [unique, not_null]
+      - name: match
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ["exact", "prefix"]
+      - name: vendor
+        data_tests: [not_null]
+      - name: legal_party
+        data_tests: [not_null]
+      - name: purpose
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ["Analytics", "Marketing / Profiling", "Functional", "Security", "Strictly Necessary"]
+      - name: typical_retention
+        data_tests: [not_null]
+      - name: control_class
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ["a", "b"]
+      - name: source
+        data_tests: [not_null]
+      - name: review_date
+        data_tests: [not_null]
+  - name: shadow_law25
+    description: "Shadow table for the Law 25 checks family, one row per source check. No evaluate column: that source field is a function, not data."
+    columns:
+      - name: row_key
+        data_tests: [unique, not_null]
+      - name: id
+        data_tests: [unique, not_null]
+      - name: title
+        data_tests: [not_null]
+      - name: law
+        data_tests: [not_null]
+      - name: weight
+        data_tests: [not_null]
+      - name: blurb
+        data_tests: [not_null]
+  - name: shadow_crawlers
+    description: "Shadow table for the crawlers family, one row per source token."
+    columns:
+      - name: row_key
+        data_tests: [unique, not_null]
+      - name: token
+        data_tests: [unique, not_null]
+      - name: operator
+        data_tests: [not_null]
+      - name: purpose
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ["training", "search-index", "user-triggered", "other", "search-and-training"]
+      - name: status
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ["active", "renamed", "retired"]
+      - name: first_documented
+        data_tests: [not_null]
+      - name: honors_robots_txt
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ["yes", "no", "disputed"]
+      - name: vendor_doc_url
+        data_tests: [not_null]
+      - name: verified_at
+        data_tests: [not_null]

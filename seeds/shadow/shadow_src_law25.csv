@@ -1,0 +1,12 @@
+row_key,id,title,law,weight,blurb
+officer,officer,"Privacy officer named, with contact",Law 25: privacy officer (s. 3.1); PIPEDA: accountability,2,"Who is accountable, and how do people reach them?"
+purposes,purposes,Purposes of collection stated,Law 25 (s. 8); PIPEDA: identifying purposes,1.5,Why is each category of information collected?
+rights,rights,Individual rights mentioned,Law 25 (ss. 28–29); PIPEDA: individual access,1.5,"Access, correction, deletion, withdrawal of consent."
+retention,retention,Retention periods stated,Law 25: destruction/anonymization (s. 23); PIPEDA: openness,1,"How long is data kept, and what happens after?"
+crossBorder,crossBorder,Cross-border transfer disclosure,Law 25 (s. 17): communication outside Québec,1,"Does data leave Québec or Canada, and is that disclosed?"
+consent,consent,Consent language,Law 25 (ss. 8–8.4); PIPEDA: consent,1,"Valid, informed, and specific, not just browsewrap."
+breach,breach,Breach / confidentiality incident mention,Law 25 (ss. 3.5–3.8): incident notification,1,Serious harm triggers CAI and individual notice.
+minors,minors,Children's data addressed,Law 25: heightened protection for minors (under 14),0.75,Under-14 data needs express consent from a parent or guardian.
+automatedDecision,automatedDecision,Automated decision-making disclosed,Law 25 (s. 8.5): info on exclusively automated decisions,0.75,Profiling and automated decisions must be disclosed on request.
+lastUpdated,lastUpdated,Last-updated date present and recent,"Law 25 (s. 8): published, dated policy",1,Stale policies erode trust and may not reflect current practice.
+complaint,complaint,Complaint path to the regulator,Law 25: CAI; PIPEDA: OPC,1,People should know where to complain.

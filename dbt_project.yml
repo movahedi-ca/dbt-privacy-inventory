@@ -25,7 +25,21 @@ models:
       +materialized: view
     marts:
       +materialized: table
+    # TASK-011 shadow families (playbook V4, D-04 shadow only).
+    # Disabled unless DBT_SHADOW_ENABLED=true, so the production
+    # nightly build node set is unchanged.
+    shadow:
+      +materialized: table
+      +enabled: "{{ env_var('DBT_SHADOW_ENABLED', 'false') | as_bool }}"
 
 seeds:
   dbt_privacy_inventory:
     +quote_columns: false
+    shadow:
+      +enabled: "{{ env_var('DBT_SHADOW_ENABLED', 'false') | as_bool }}"
+      shadow_src_law25:
+        +column_types:
+          weight: double
+      shadow_src_enforcement:
+        +column_types:
+          penalty_cad: double
