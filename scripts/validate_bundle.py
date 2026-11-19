@@ -16,7 +16,13 @@ Checks (fail closed, exit 1 on any failure):
   nonempty, statuses in the approved set, no fail or error status).
   The expected set is expected_result_ids.json when the run directory
   holds one (fixture form), else the manifest nodes whose
-  resource_type is model, seed, test, or snapshot.
+  resource_type is model, seed, test, or snapshot. A node whose
+  manifest config.enabled is false was not executed by the build
+  (dbt records the build's own enablement decision there; the
+  TASK-011 shadow families are gated by DBT_SHADOW_ENABLED through
+  that config), so it is not expected in run_results. When shadow
+  is enabled the same nodes carry config.enabled true and are
+  expected again.
 """
 import argparse, json, os, re, sys
 
@@ -103,7 +109,8 @@ def main():
         expected = set(exp_data["expected_ids"] if isinstance(exp_data, dict) else exp_data)
     else:
         expected = {k for k, n in (manifest.get("nodes") or {}).items()
-                    if n.get("resource_type") in RESULT_TYPES}
+                    if n.get("resource_type") in RESULT_TYPES
+                    and (n.get("config") or {}).get("enabled") is not False}
     if not expected:
         fail("EXPECTED_EMPTY: expected executed-node set is empty")
     if not results:
